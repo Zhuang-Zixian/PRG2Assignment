@@ -11,6 +11,7 @@
         // Properties of the Airline class
         public string Name { get; set; } // Name of the airline
         public string Code { get; set; } // Code of the airline
+        public Dictionary<string, Flight> Flights { get; set; } // Flights operated by the airline
 
         // Default constructor
         public Airline()
@@ -32,7 +33,7 @@
             {
                 return false; // Flight with the same flight number already exists
             }
-            flights[flight.FlightNumber] = flight;
+            flights.Add(flight.FlightNumber, flight);
             return true;
         }
 
@@ -40,10 +41,45 @@
         public double CalculateFees()
         {
             double totalFees = 0;
+            int flightCount = flights.Count;
+
+            // Calculate base fees for each flight
             foreach (Flight flight in flights.Values)
             {
                 totalFees += flight.CalculateFees();
             }
+
+            // Apply 3% discount if the airline has more than 5 flights
+            if (flightCount > 5)
+            {
+                totalFees *= 0.97; // 3% off the total bill
+            }
+
+            // Apply other discounts
+            foreach (Flight flight in flights.Values)
+            {
+                // Apply discount for flights before 11am or after 9pm
+                if (flight.ExpectedTime.TimeOfDay < new TimeSpan(11, 0, 0) || flight.ExpectedTime.TimeOfDay > new TimeSpan(21, 0, 0))
+                {
+                    totalFees -= 110;
+                }
+
+                // Apply discount for flights with the Origin of Dubai (DXB), Bangkok (BKK) or Tokyo (NRT)
+                if (flight.Origin == "DXB" || flight.Origin == "BKK" || flight.Origin == "NRT")
+                {
+                    totalFees -= 25;
+                }
+
+                // Apply discount for flights not indicating any Special Request Codes
+                if (flight is CFFTFlight || flight is LWTTFlight || flight is DDJBFlight)
+                {
+                    totalFees -= 50;
+                }
+            }
+
+            // Apply discount for every 3 flights
+            totalFees -= (int)(flightCount / 3) * 350;
+
             return totalFees;
         }
 

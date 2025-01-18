@@ -30,9 +30,11 @@
             Status = s;
         }
 
-        // Abstract method to calculate fees for the flight
-        // Must be implemented by derived classes
-        public abstract double CalculateFees();
+       
+        public virtual double CalculateFees()
+        {
+            return 0;
+        }
 
         // Override of the ToString method to provide a string representation of the flight
         public override string ToString()
