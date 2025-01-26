@@ -10,7 +10,7 @@ namespace S10270525_PRG2Assignment
     class CFFTFlight : Flight
     {
         public CFFTFlight() { }
-        public CFFTFlight(string fn, string o, string d, DateTime et, string s) : base(fn, o, d, et, s) { }
+        public CFFTFlight(string fn, string o, string d, DateTime et, string s, Airline airline) : base(fn, o, d, et, s, airline) { }
 
         private double RequestFee()
         {

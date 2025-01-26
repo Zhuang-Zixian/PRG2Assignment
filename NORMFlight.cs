@@ -10,7 +10,7 @@ namespace S10270525_PRG2Assignment
     class NORMFlight : Flight
     {
         public NORMFlight() { }
-        public NORMFlight(string fn, string o, string d, DateTime et, string s) : base(fn, o, d, et, s) { }
+        public NORMFlight(string fn, string o, string d, DateTime et, string s, Airline airline) : base(fn, o, d, et, s, airline) { }
         public override double CalculateFees()
         {
             if (Destination == "SIN")

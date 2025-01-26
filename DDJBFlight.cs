@@ -10,7 +10,7 @@ namespace S10270525_PRG2Assignment
     class DDJBFlight : Flight
     {
         public DDJBFlight() { }
-        public DDJBFlight(string fn, string o, string d, DateTime et, string s) : base(fn, o, d, et, s) { }
+        public DDJBFlight(string fn, string o, string d, DateTime et, string s, Airline airline) : base(fn, o, d, et, s, airline) { }
         private double RequestFee()
         {
             return 300;
