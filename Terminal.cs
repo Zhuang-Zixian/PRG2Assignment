@@ -1,4 +1,11 @@
-﻿namespace S10270525_PRG2Assignment
+﻿//==================================
+// Student Number : S10270525J
+// Student Number : S10268018C
+// Student Name   : Zhuang Zixian
+// Student Name   : Tan Zi En
+//==================================
+
+namespace S10270525_PRG2Assignment
 {
     class Terminal
     {
