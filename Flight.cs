@@ -1,4 +1,11 @@
-﻿namespace S10270525_PRG2Assignment
+﻿//==================================
+// Student Number : S10270525J
+// Student Number : S10268018C
+// Student Name   : Zhuang Zixian
+// Student Name   : Tan Zi En
+//==================================
+
+namespace S10270525_PRG2Assignment
 {
     // Abstract class representing a flight
     abstract class Flight
@@ -30,7 +37,7 @@
             Status = s;
         }
 
-       
+
         public virtual double CalculateFees()
         {
             return 0;
