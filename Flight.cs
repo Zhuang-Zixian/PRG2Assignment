@@ -24,17 +24,22 @@ namespace S10270525_PRG2Assignment
         public DateTime ExpectedTime { get; set; } // Expected departure or arrival time
         public string Status { get; set; } // Current status of the flight (e.g., On Time, Delayed)
 
+        // Multiplicity
+        public Airline Airline { get; set; } // references to the airline class
+
+
         // Default constructor
         public Flight() { }
 
         // Parameterized constructor to initialize a flight with specific details
-        public Flight(string fn, string o, string d, DateTime et, string s)
+        public Flight(string fn, string o, string d, DateTime et, string s, Airline airline)
         {
             FlightNumber = fn;
             Origin = o;
             Destination = d;
             ExpectedTime = et;
             Status = s;
+            Airline = airline; // Linking flight to airline 
         }
 
 

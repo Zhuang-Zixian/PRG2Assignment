@@ -34,6 +34,7 @@
                 return false; // Flight with the same flight number already exists
             }
             flights.Add(flight.FlightNumber, flight);
+            flight.Airline = this; // setting the airline to reference this in the flight class
             return true;
         }
 
