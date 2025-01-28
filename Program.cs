@@ -5,6 +5,7 @@
 // Student Name   : Tan Zi En
 //==================================
 
+using System.Collections.Generic;
 using S10270525_PRG2Assignment;
 // Initialising Generic Collections:
 // Created a new dictionary to store the different flights
@@ -29,9 +30,10 @@ while (loop != -1)
     Console.WriteLine("2. List Boarding Gates");
     Console.WriteLine("3. Assign a Boarding Gate to a Flight");
     Console.WriteLine("4. Create Flight");
+    Console.WriteLine("5. Display Airline Flights");
     Console.WriteLine("0. Exit\n");
 
-    Console.WriteLine("Please select your option: "); //input is entered in the next line
+    Console.Write("Please select your option: "); //input is entered in the next line
 
     string userOption = Console.ReadLine();
 
@@ -54,6 +56,11 @@ while (loop != -1)
     {
         // Call the CreateFlight method ONCE
         CreateFlight();
+    }
+    else if (userOption == "5")
+    {
+        //Call the DisplayFlightDetails method ONCE
+        DisplayFlightDetails();
     }
     else if (userOption == "0")
     {
@@ -148,7 +155,6 @@ void InitialiseFlights()
 
                 // Extract airline code from flight number (first two characters)
                 string airlineCode = flightNumber.Substring(0, 2);
-
                 // Manually assign airline based on the extracted airline code
                 Airline? airline = airlineCode == "SQ" ? new Airline("Singapore Airlines", "SQ") :
                                    airlineCode == "MH" ? new Airline("Malaysia Airlines", "MH") :
@@ -159,6 +165,7 @@ void InitialiseFlights()
                                    airlineCode == "EK" ? new Airline("Emirates", "EK") :
                                    airlineCode == "BA" ? new Airline("British Airways", "BA") :
                                    null;
+
 
                 // Determining the flight type based off the Special Request Code from the flights.csv
                 // Setting the default to "On Time"
@@ -545,3 +552,54 @@ void CreateFlight()
         }
     }
 }
+
+// Implementing Basic Feature (7) Displaying full flight details from an airline.
+
+void DisplayFlightDetails()
+{
+    Console.WriteLine("=============================================");
+    Console.WriteLine("List of Airlines for Changi Airport Terminal 5");
+    Console.WriteLine("=============================================");
+    Console.WriteLine($"{"Airline Code",-20} {"Airline Name",-20}");
+
+    //Display the list of available airlines
+    foreach (Airline airline in airlines.Values)
+    {
+        Console.WriteLine($"{airline.Code,-20} {airline.Name,-20}");
+    }
+
+    Console.Write("Enter Airline Code: ");
+    string airlinecode = Console.ReadLine().ToUpper();
+
+    try
+    {
+        {
+            // Check if the entered airline code is valid
+            if (airlinecode == "SQ" || airlinecode == "MH" || airlinecode == "JL" || airlinecode == "CX" || airlinecode == "QF" || airlinecode == "TR" || airlinecode == "EK" || airlinecode == "BA")
+            {
+                Console.WriteLine($"{"Flight Number",-20}{"Airline Name",-20}{"Origin",-20}{"Destination",-20}{"Expected",-20}");
+                Console.WriteLine("Departure/Arrival Time");
+
+                // Display the flights for the selected airline
+                foreach (Flight flight in flights.Values)
+                {
+                    if (flight.Airline.Code == airlinecode)
+                    {
+                        Console.WriteLine($"{flight.FlightNumber,-20}{flight.Airline.Name,-20}{flight.Origin,-20}{flight.Destination,-20}{flight.ExpectedTime.ToString("MM/dd/yyyy"),-20}");
+                        Console.WriteLine(flight.ExpectedTime.ToString("hh:mm:ss tt"));
+                    }
+                }
+            }
+            else
+            {
+                // Inform the user if the airline code is invalid
+                Console.WriteLine("Airline Code is invalid. Please try again.");
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"An error occurred: {ex.Message}");
+    }
+}
+
