@@ -8,7 +8,7 @@
 namespace S10270525_PRG2Assignment
 {
     // Abstract class representing a flight
-    abstract class Flight
+    abstract class Flight : IComparable<Flight>
     {
         // Private Attributes
         private string flightNumber;
@@ -42,6 +42,12 @@ namespace S10270525_PRG2Assignment
             Airline = airline; // Linking flight to airline 
         }
 
+        // Implement IComparable<Flight> to sort flights chronologically
+        public int CompareTo(Flight? other)
+        {
+            if (other == null) return 1;
+            return this.ExpectedTime.CompareTo(other.ExpectedTime);
+        }
 
         public virtual double CalculateFees()
         {

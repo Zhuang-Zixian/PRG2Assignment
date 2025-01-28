@@ -5,7 +5,6 @@
 // Student Name   : Tan Zi En
 //==================================
 
-using System.Collections.Generic;
 using S10270525_PRG2Assignment;
 // Initialising Generic Collections:
 // Created a new dictionary to store the different flights
@@ -32,6 +31,7 @@ while (loop != -1)
     Console.WriteLine("4. Create Flight");
     Console.WriteLine("5. Display Airline Flights");
     Console.WriteLine("6. Modify Flight Details");
+    Console.WriteLine("7. Display Flight Schedule");
     Console.WriteLine("0. Exit\n");
 
     Console.WriteLine("Please select your option: "); //input is entered in the next line
@@ -65,7 +65,13 @@ while (loop != -1)
     }
     else if (userOption == "6")
     {
+        // Call the ModifyFLightDetails method ONCE
         ModifyFlightDetails();
+    }
+    else if (userOption == "7")
+    {
+        // Call the DisplayFlightSchedule method ONCE
+        DisplayFlightSchedule();
     }
     else if (userOption == "0")
     {
@@ -772,3 +778,36 @@ void ModifyFlightDetails()
     }
 }
 
+// Basic Feature (9) Displaying scheduled flights in chronological order with boarding gates
+void DisplayFlightSchedule()
+{
+    Console.WriteLine("=============================================");
+    Console.WriteLine("Flight Schedule for Changi Airport Terminal 5");
+    Console.WriteLine("=============================================");
+    Console.WriteLine($"{"Flight Number",-15} {"Airline Name",-22} {"Origin",-20} {"Destination",-20} {"Expected Departure/Arrival Time",-33} {"Status",-12} {"Boarding Gate"}");
+
+    // Convert dictionary values to a list and sort by ExpectedTime
+    List<Flight> sortedFlights = flights.Values.ToList();
+    sortedFlights.Sort(); // Uses IComparable<Flight> to sort by ExpectedTime
+
+    foreach (var flight in sortedFlights)
+    {
+        string boardingGate = "Unassigned";
+
+        // Find assigned gate (if gate is assigned)
+        foreach (var gate in boardingGates.Values)
+        {
+            if (gate.Flight == flight)
+            {
+                boardingGate = gate.GateName;
+                break;
+            }
+        }
+
+        // Format Expected Time to match the sample output: "13/1/2025 3:40:00 pm"
+        string formattedTime = flight.ExpectedTime.ToString("d/M/yyyy h:mm:ss tt");
+
+        // Print flight details in a properly formatted single-line format
+        Console.WriteLine($"{flight.FlightNumber,-15} {flight.Airline.Name,-22} {flight.Origin,-20} {flight.Destination,-20} {formattedTime,-33} {flight.Status,-12} {boardingGate}");
+    }
+}
