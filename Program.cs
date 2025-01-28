@@ -146,8 +146,19 @@ void InitialiseFlights()
                 // If 5th column is empty it defaults to empty string ""
                 string specialRequestCode = data.Length > 4 ? data[4].Trim() : ""; // Flight Special Request Code
 
-                // Retrieve the airline based on the origin code
-                Airline? airline = airlines.ContainsKey(origin) ? airlines[origin] : null;
+                // Extract airline code from flight number (first two characters)
+                string airlineCode = flightNumber.Substring(0, 2);
+
+                // Manually assign airline based on the extracted airline code
+                Airline? airline = airlineCode == "SQ" ? new Airline("Singapore Airlines", "SQ") :
+                                   airlineCode == "MH" ? new Airline("Malaysia Airlines", "MH") :
+                                   airlineCode == "JL" ? new Airline("Japan Airlines", "JL") :
+                                   airlineCode == "CX" ? new Airline("Cathay Pacific", "CX") :
+                                   airlineCode == "QF" ? new Airline("Qantas Airways", "QF") :
+                                   airlineCode == "TR" ? new Airline("AirAsia", "TR") :
+                                   airlineCode == "EK" ? new Airline("Emirates", "EK") :
+                                   airlineCode == "BA" ? new Airline("British Airways", "BA") :
+                                   null;
 
                 // Determining the flight type based off the Special Request Code from the flights.csv
                 // Setting the default to "On Time"
