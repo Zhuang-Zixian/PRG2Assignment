@@ -31,9 +31,10 @@ while (loop != -1)
     Console.WriteLine("3. Assign a Boarding Gate to a Flight");
     Console.WriteLine("4. Create Flight");
     Console.WriteLine("5. Display Airline Flights");
+    Console.WriteLine("6. Modify Flight Details");
     Console.WriteLine("0. Exit\n");
 
-    Console.Write("Please select your option: "); //input is entered in the next line
+    Console.WriteLine("Please select your option: "); //input is entered in the next line
 
     string userOption = Console.ReadLine();
 
@@ -61,6 +62,10 @@ while (loop != -1)
     {
         //Call the DisplayFlightDetails method ONCE
         DisplayFlightDetails();
+    }
+    else if (userOption == "6")
+    {
+        ModifyFlightDetails();
     }
     else if (userOption == "0")
     {
@@ -595,6 +600,170 @@ void DisplayFlightDetails()
                 // Inform the user if the airline code is invalid
                 Console.WriteLine("Airline Code is invalid. Please try again.");
             }
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"An error occurred: {ex.Message}");
+    }
+}
+
+//Implementing Basic Feature (8) Modify flight details
+
+void ModifyFlightDetails()
+{
+
+    Console.WriteLine("=============================================");
+    Console.WriteLine("List of Airlines for Changi Airport Terminal 5");
+    Console.WriteLine("=============================================");
+    Console.WriteLine($"{"Airline Code",-20} {"Airline Name",-20}");
+
+    //Display the list of available airlines
+    foreach (Airline airline in airlines.Values)
+    {
+        Console.WriteLine($"{airline.Code,-20} {airline.Name,-20}");
+    }
+
+    Console.Write("Enter Airline Code: ");
+    string airlineCode = Console.ReadLine().ToUpper();
+
+    try
+    {
+        // Check if the entered airline code is valid
+        if (airlineCode == "SQ" || airlineCode == "MH" || airlineCode == "JL" || airlineCode == "CX" || airlineCode == "QF" || airlineCode == "TR" || airlineCode == "EK" || airlineCode == "BA")
+        {
+            Console.WriteLine($"{"Flight Number",-20}{"Airline Name",-20}{"Origin",-20}{"Destination",-20}{"Expected",-20}");
+            Console.WriteLine("Departure/Arrival Time");
+
+            // Display the flights for the selected airline
+            foreach (Flight flight in flights.Values)
+            {
+                if (flight.Airline.Code == airlineCode)
+                {
+                    Console.WriteLine($"{flight.FlightNumber,-20}{flight.Airline.Name,-20}{flight.Origin,-20}{flight.Destination,-20}{flight.ExpectedTime:MM/dd/yyyy,-20}");
+                    Console.WriteLine(flight.ExpectedTime.ToString("hh:mm:ss tt"));
+                }
+            }
+
+            Console.Write("Choose an existing flight to modify or delete: ");
+            string? flightChoice = Console.ReadLine()?.ToUpper();
+
+            // Validate if the flight exists
+            if (flightChoice == null || !flights.ContainsKey(flightChoice))
+            {
+                Console.WriteLine("Flight not found. Please enter a valid flight number.");
+                return;
+            }
+
+            Console.WriteLine("1. Modify Flight");
+            Console.WriteLine("2. Delete Flight");
+            Console.Write("Choose an option: ");
+            string? modChoice = Console.ReadLine();
+
+            if (modChoice == "1")
+            {
+                // Modify Flight
+                Flight selectedFlight = flights[flightChoice];
+
+                // Prompt user for new details
+                Console.Write("Enter new Origin: ");
+                string? newOrigin = Console.ReadLine()?.Trim();
+
+                Console.Write("Enter new Destination: ");
+                string? newDestination = Console.ReadLine()?.Trim();
+
+                DateTime newExpectedTime;
+                while (true)
+                {
+                    Console.Write("Enter new Expected Departure/Arrival Time (dd/MM/yyyy HH:mm): ");
+                    if (DateTime.TryParse(Console.ReadLine(), out newExpectedTime)) // Converts user input to DateTime and store the DateTime value as newExpectedTime.
+                    {
+                        if (newExpectedTime.Day <= 31 && newExpectedTime.Month <= 12) // Ensuring the date and month is valid.
+                        {
+                            break;
+                        }
+                        Console.WriteLine("Invalid date. Ensure day is between 1-31 and month is between 1-12.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid format. Please re-enter (dd/MM/yyyy HH:mm): ");
+                    }
+                }
+
+                // Update flight details
+                if (newOrigin != null) selectedFlight.Origin = newOrigin;
+                if (newDestination != null) selectedFlight.Destination = newDestination;
+                selectedFlight.ExpectedTime = newExpectedTime;
+                // Writing update confirmation and updated details
+                Console.WriteLine("Flight updated!");
+                Console.WriteLine($"Flight Number: {flightChoice}");
+                Console.WriteLine($"Airline Name: {selectedFlight.Airline.Name}");
+                Console.WriteLine($"Origin: {newOrigin}");
+                Console.WriteLine($"Destination: {newDestination}");
+                Console.WriteLine($"Expected Departure/Arrival Time: {selectedFlight.ExpectedTime}");
+                Console.WriteLine($"Status: {selectedFlight.Status}");
+                //Checking if there is a special request code and displaying the code.
+                if (selectedFlight is CFFTFlight)
+                {
+                    Console.WriteLine("Special Request Code: CFFT");
+                }
+                else if (selectedFlight is LWTTFlight)
+                {
+                    Console.WriteLine("Special Request Code: LWTT");
+                }
+                else if (selectedFlight is DDJBFlight)
+                {
+                    Console.WriteLine("Special Request Code: DDJB");
+                }
+                else
+                {
+                    Console.WriteLine("Special Request Code: None");
+                }
+                //Checking if there is a boarding gate.
+                bool boardingGateCheck = false; // Setting to false to print unassign by default
+                foreach (BoardingGate gate in boardingGates.Values) // Checking each gate to see if flight is assign to the gate.
+                {
+                    if (gate.Flight == selectedFlight)
+                    {
+                        Console.WriteLine($"Boarding Gate: {gate.GateName}");
+                        boardingGateCheck = true;
+                    }
+                }
+                if (boardingGateCheck == false)
+                {
+                    Console.WriteLine("Boarding Gate: Unassigned");
+                }
+            }
+            // Deletion of flight
+            else if (modChoice == "2")
+            {
+                Console.WriteLine($"Please confirm the deletion of flight {flightChoice} (Y/N)"); // Confirmation of deletion.
+                string? confirmationChoice = Console.ReadLine()?.ToUpper();
+                if (confirmationChoice == "Y")
+                {
+                    // Delete Flight
+                    flights.Remove(flightChoice);
+                    Console.WriteLine("Flight deleted successfully."); // Input validation
+                }
+                else if (confirmationChoice == "N")
+                {
+                    return;
+                }
+                else
+                {
+                    Console.WriteLine("Your choice is invalid. Please try again.");
+                    return;
+                }
+            }
+            else
+            {
+                Console.WriteLine("Invalid option. Please enter 1 or 2."); // Input validation
+            }
+        }
+        else
+        {
+            // Input Validation
+            Console.WriteLine("Airline Code is invalid. Please try again.");
         }
     }
     catch (Exception ex)
