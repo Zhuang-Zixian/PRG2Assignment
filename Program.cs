@@ -22,7 +22,7 @@ InitialiseBoardingGates();
 int loop = 0;
 while (loop != -1)
 {
-    Console.WriteLine("\n==============================================");
+    Console.WriteLine("\n================================================");
     Console.WriteLine("Welcome to Changi Airport Terminal 5");
     Console.WriteLine("================================================");
     Console.WriteLine("1. List All Flights");
@@ -32,6 +32,7 @@ while (loop != -1)
     Console.WriteLine("5. Display Airline Flights");
     Console.WriteLine("6. Modify Flight Details");
     Console.WriteLine("7. Display Flight Schedule");
+    Console.WriteLine("9. Display Flight Fees (Advanced Feature B)");
     Console.WriteLine("0. Exit\n");
 
     Console.WriteLine("Please select your option: "); //input is entered in the next line
@@ -72,6 +73,12 @@ while (loop != -1)
     {
         // Call the DisplayFlightSchedule method ONCE
         DisplayFlightSchedule();
+    }
+    else if (userOption == "9")
+    {
+        // Call the DisplayAirlineFees method ONCE
+        DisplayAirlineFees();
+
     }
     else if (userOption == "0")
     {
@@ -184,6 +191,7 @@ void InitialiseFlights()
                 Flight flight;
                 if (specialRequestCode == "DDJB")
                 {
+                    // Might need to change all the "On Time" to scheduled to meet the sample output
                     flight = new DDJBFlight(flightNumber, origin, destination, expectedTime, "On Time", airline);
                 }
                 else if (specialRequestCode == "CFFT")
@@ -298,6 +306,18 @@ void AssignBoardingGate()
         }
         // Performs a search function to search for flight objects with matching flightNums as keys
         Flight selectedFlight = flights[flightNum];
+
+        // Ensure the flight does not already have a boarding gate assigned for the same day
+        bool alreadyAssigned = boardingGates.Values.Any(gate =>
+            gate.Flight != null &&
+            gate.Flight.FlightNumber == flightNum &&
+            gate.Flight.ExpectedTime.Date == selectedFlight.ExpectedTime.Date);
+
+        if (alreadyAssigned)
+        {
+            Console.WriteLine($"Error: Flight {flightNum} already has a Boarding Gate assigned for {selectedFlight.ExpectedTime:dd/MM/yyyy}.");
+            return;
+        }
 
         // Gather user input for the boarding gate name
         Console.WriteLine("Enter Boarding Gate Name: ");
@@ -810,4 +830,58 @@ void DisplayFlightSchedule()
         // Print flight details in a properly formatted single-line format
         Console.WriteLine($"{flight.FlightNumber,-15} {flight.Airline.Name,-22} {flight.Origin,-20} {flight.Destination,-20} {formattedTime,-33} {flight.Status,-12} {boardingGate}");
     }
+}
+
+// Advanced Feature (B) Display the total fee per airline for the day - Zixian
+// This code is highly likely be broken as the advanced feature A is required to test the code without i can't move forward.
+void DisplayAirlineFees()
+{
+    Console.WriteLine("=============================================");
+    Console.WriteLine("Daily Flight Fees for Changi Airport Terminal 5");
+    Console.WriteLine("=============================================");
+
+    // Using a lambda expression to check if ALL the flights are assigned a boarding gate
+    bool unassignedFlights = flights.Values.Any(flight => !boardingGates.Values.Any(gate => gate.Flight == flight));
+
+    // Check if unassignedFlights returns a true expression, the if statement will run showing an error message
+    if (unassignedFlights)
+    {
+        Console.WriteLine("All flights must have an assigned boarding gate");
+        return;
+    }
+
+    // Initialising variables to calculate total with
+    double totalFeesCollected = 0.0;
+    double totalDiscountsApplied = 0.0;
+
+    foreach (var airline in airlines.Values)
+    {
+        // Get the total fee after applying discounts
+        double finalAirlineFee = airline.CalculateFees();
+
+        // Calculate airline subtotal before all the discounts
+        double airlineSubtotal = airline.Flights.Values.Sum(f => f.CalculateFees());
+
+        // Calculate total discount applied
+        double airlineDiscounts = airlineSubtotal - finalAirlineFee;
+
+        // Track total for all airlines
+        totalFeesCollected += finalAirlineFee;
+        totalDiscountsApplied += airlineDiscounts;
+
+        // Display breakdown for each airline
+        Console.WriteLine($"Airline: {airline.Name} ({airline.Code})");
+        Console.WriteLine($"  Flights: {airline.Flights.Count}");
+        Console.WriteLine($"  Subtotal Fees: ${airlineSubtotal:F2}");
+        Console.WriteLine($"  Discounts Applied: -${airlineDiscounts:F2}");
+        Console.WriteLine($"  Final Total Fee: ${finalAirlineFee:F2}");
+        Console.WriteLine("-------------------------------------------------");
+    }
+
+    // Display Summary of Total Fees and Discounts
+    Console.WriteLine("=============================================");
+    Console.WriteLine($"Total Fees Collected from All Airlines: ${totalFeesCollected:F2}");
+    Console.WriteLine($"Total Discounts Applied: -${totalDiscountsApplied:F2}");
+    Console.WriteLine($"Net Revenue Collected: ${totalFeesCollected - totalDiscountsApplied:F2}");
+    Console.WriteLine($"Discount Percentage: {((totalDiscountsApplied / totalFeesCollected) * 100):F2}%");
 }
