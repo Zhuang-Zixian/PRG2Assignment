@@ -377,9 +377,19 @@ void AssignBoardingGate()
         Console.WriteLine($"Supports CFFT: {selectedGate.SupportsCFFT}");
         Console.WriteLine($"Supports LWTT: {selectedGate.SupportsLWTT}");
 
-        // Gather user input if they would like to change the status of the flight
-        Console.WriteLine("Would you like to update the status of the flight? (Y/N)");
-        string updateStatus = Console.ReadLine().ToUpper();
+        // Input validation checking if user input is either Y || N else return invalid input
+        string updateStatus;
+        while (true)
+        {
+            Console.Write("Would you like to update the status of the flight? (Y/N): ");
+            updateStatus = Console.ReadLine().Trim().ToUpper();
+
+            if (updateStatus == "Y" || updateStatus == "N")
+            {
+                break;
+            }
+            Console.WriteLine("Invalid input. Please enter 'Y' for Yes or 'N' for No.");
+        }
 
         if (updateStatus == "Y")
         {
@@ -389,8 +399,8 @@ void AssignBoardingGate()
                 Console.WriteLine("1. Delayed");
                 Console.WriteLine("2. Boarding");
                 Console.WriteLine("3. On Time");
-                Console.WriteLine("Please select the new status of the flight: ");
-                string statusOption = Console.ReadLine();
+                Console.Write("Please select the new status of the flight: ");
+                string statusOption = Console.ReadLine().Trim();
 
                 switch (statusOption)
                 {
@@ -413,8 +423,8 @@ void AssignBoardingGate()
             }
         }
 
-        // Confirmation of flight to gate assignment
-        Console.WriteLine($"Flight {selectedFlight.FlightNumber} has been assigned to Boarding Gate {selectedGate.GateName}!");
+        // Confirm assignment
+        Console.WriteLine($"Final Confirmation: Flight {selectedFlight.FlightNumber} is now assigned to Gate {selectedGate.GateName} with status {selectedFlight.Status}.");
     }
     catch (Exception ex)
     {
