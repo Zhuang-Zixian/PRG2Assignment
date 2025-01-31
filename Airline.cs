@@ -24,6 +24,7 @@
         {
             Name = n;
             Code = c;
+            Flights = new Dictionary<string, Flight>();
         }
 
         // Method to add a flight to the airline
