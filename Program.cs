@@ -332,6 +332,15 @@ void AssignBoardingGate()
             Console.WriteLine($"Boarding Gate {selectedGate.GateName} is already assigned to Flight {selectedGate.Flight.FlightNumber}. Please choose another gate.");
         }
 
+        // Validate that the gate supports the special request code of the flight
+        if ((selectedFlight is CFFTFlight && !selectedGate.SupportsCFFT) ||
+            (selectedFlight is DDJBFlight && !selectedGate.SupportsDDJB) ||
+            (selectedFlight is LWTTFlight && !selectedGate.SupportsLWTT))
+        {
+            Console.WriteLine($"Error: Boarding Gate {selectedGate.GateName} does not support the special request code required for Flight {selectedFlight.FlightNumber}.");
+            return;
+        }
+
         // Assign the gate to the flight
         selectedGate.Flight = selectedFlight;
 
